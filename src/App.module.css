@@ -1,0 +1,22 @@
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100dvh;
+
+  main {
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-block-end: 0.5rem;
+    }
+
+    .boards {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+      gap: 1rem;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+.board {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 1rem;
+
+  block-size: 100%;
+
+  
+
+
+}

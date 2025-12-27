@@ -1,0 +1,17 @@
+.home-page {
+  block-size: 100%;
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    margin-block-end: 0.5rem;
+  }
+
+  .boards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: 1rem;
+  }
+}
