@@ -1,16 +1,16 @@
-import { use, type ComponentProps, type ReactNode } from "react";
+import { type ComponentProps, type ReactNode } from "react";
 
 import Initials from "@/components/Initials/Initials";
 import SidebarItem from "@/components/Sidebar/components/SidebarItem/SidebarItem.tsx";
-import { BoardsContext } from "@/context/boards-context";
 import MingcuteHome7Line from "@/icons/MingcuteHome7Line";
-import MingcuteSettings5Line from "@/icons/MingcuteSettings5Line";
-import { useSidebarStore } from "@/stores/sidebar-store";
-import clsx from "clsx";
-import styles from "./SidebarGroups.module.css";
-import { useThemeStore } from "@/stores/theme-store";
 import MingcuteMoonStarsLine from "@/icons/MingcuteMoonStarsLine";
+import MingcuteSettings5Line from "@/icons/MingcuteSettings5Line";
+import { useKanbanStore } from "@/stores/kanban-store";
+import { useSidebarStore } from "@/stores/sidebar-store";
+import { useThemeStore } from "@/stores/theme-store";
+import clsx from "clsx";
 import ThemeSwitch from "../ThemeSwitch/ThemeSwitch";
+import styles from "./SidebarGroups.module.css";
 
 type SidebarGroup = {
     title?: string,
@@ -19,7 +19,7 @@ type SidebarGroup = {
 
 export default function SidebarGroups(): ReactNode {
     const isCollapsed = useSidebarStore(state=>state.isCollapsed)
-    const { boards } = use(BoardsContext)
+    const boards  = useKanbanStore(state=>state.boards)
     const toggleTheme = useThemeStore(state=>state.toggleTheme)
 
     const groups: SidebarGroup[] = [

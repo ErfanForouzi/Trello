@@ -6,7 +6,6 @@ import clsx from "clsx";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import { ListsContext } from "@/context/lists-context";
 
 
 import type { ListItemType } from "@/types/list-item.ts";
@@ -37,7 +36,6 @@ function ListItem({
     });
 
   const overListIndex = over?.data.current?.listIndex;
-  const { dispatchLists } = use(ListsContext);
 
 
   const modalEditItemRef = useRef<HTMLDialogElement>(null)

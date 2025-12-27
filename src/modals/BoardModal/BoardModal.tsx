@@ -1,15 +1,14 @@
 import {
   type ComponentProps,
-  type ReactNode,
-  use
+  type ReactNode
 } from "react";
 
 import { toast } from "react-toastify";
 
 
 import ColorInput from "@/components/ColorInput/ColorInput";
-import { BoardsContext } from "@/context/boards-context";
 import { BoardSchema } from "@/schemas/board-schema";
+import { useKanbanStore } from "@/stores/kanban-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
@@ -35,13 +34,16 @@ export default function BoardModal({
   })
 
 
-  const { dispatchBoards } = use(BoardsContext);
+  const createBoard = useKanbanStore(state=>state.createBoard)
+  const editBoard = useKanbanStore(state=>state.editBoard)
+  const removeBoard = useKanbanStore(state=>state.removeBoard)
+
 
   const navigate = useNavigate()
 
   const handleRemoveButton = (): void => {
     if (boardId === undefined) { return };
-    dispatchBoards({ type: "board_removed", boardId })
+     removeBoard(boardId)
     toast.success("Board removed successfully")
     modalRef.current?.close();
 
@@ -51,11 +53,10 @@ export default function BoardModal({
   const handleFormSubmit = (values: Values): void => {
 
     if (boardId !== undefined) {
-      dispatchBoards({ type: "board_edited", board: values, boardId });
+      editBoard(boardId,values)
       toast.success("Board editted successfully.");
     } else {
-      const id = crypto.randomUUID();
-      dispatchBoards({ type: "board_created", board: { ...values, lists: [], id } });
+      createBoard(values)
       toast.success("Board created successfully.");
     }
     modalRef.current?.close();

@@ -1,17 +1,17 @@
 import {
-  use,
   type ComponentProps,
   type ReactNode
 } from "react";
 
 import { toast } from "react-toastify";
 
-import { ListsContext } from "@/context/lists-context";
 
 
 import { ListSchema } from "@/schemas/list-schema";
+import { useKanbanStore } from "@/stores/kanban-store";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useParams } from "react-router";
 import z from "zod";
 import TextInput from "../../components/TextInput/TextInput";
 import FormModal from "../FormModal/FormModal";
@@ -31,7 +31,11 @@ export default function ListModal({
 }: Props): ReactNode {
 
 
-  const { dispatchLists } = use(ListsContext);
+const {boardId} = useParams()
+
+const  createList= useKanbanStore(state=>state.createList)
+const  editList= useKanbanStore(state=>state.editList)
+const  removeList= useKanbanStore(state=>state.removeList)
 
   const { reset, register, handleSubmit, formState: { errors } } = useForm<Values>({
     defaultValues,
@@ -40,7 +44,7 @@ export default function ListModal({
 
   const handleRemoveButton = (): void => {
     if (listIndex === undefined) { return };
-    dispatchLists({ type: "list_removed", listIndex })
+    removeList(boardId,listIndex)
     toast.success("List removed successfully")
     modalRef.current?.close();
   };
@@ -48,11 +52,10 @@ export default function ListModal({
   const handleFormSubmit = (values: Values): void => {
 
     if (listIndex !== undefined) {
-      dispatchLists({ type: "list_edited", list: values, listIndex });
+      editList(boardId,listIndex,values)
       toast.success("List editted successfully.");
     } else {
-      const id = crypto.randomUUID();
-      dispatchLists({ type: "list_created", list: { ...values, items: [], id } });
+      createList(boardId,values)
       toast.success("List created successfully.");
     }
 

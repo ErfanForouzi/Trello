@@ -1,4 +1,6 @@
-import { type PropsWithChildren, type ReactNode, use, useState } from "react";
+import { type PropsWithChildren, type ReactNode, useState } from "react";
+
+import { useParams } from "react-router";
 
 import {
   DndContext,
@@ -11,63 +13,75 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 
-import List from "@/components/List/List";
-import ListItem from "@/components/ListItem/ListItem";
+import List from "@/components/List/List.tsx";
+import ListItem from "@/components/ListItem/ListItem.tsx";
 
-import { ListsContext } from "@/context/lists-context";
 
-import type { DraggableData } from "@/types/draggable-data";
+import { useKanbanStore } from "@/stores/kanban-store.ts";
+
+import type { DraggableData } from "@/types/draggable-data.ts";
 
 type Props = PropsWithChildren;
 
 export default function DndProvider({ children }: Props): ReactNode {
-  const [activeData, setActiveData] = useState<DraggableData | null>(null);
+  const { boardId } = useParams();
+
+  const moveList = useKanbanStore((state) => state.moveList);
+  const moveItem = useKanbanStore((state) => state.moveItem);
+  const moveItemBetweenLists = useKanbanStore(
+    (state) => state.moveItemBetweenLists,
+  );
+
   const sensors = useSensors(useSensor(PointerSensor));
 
-  const { dispatchLists } = use(ListsContext);
+  const [activeData, setActiveData] = useState<DraggableData | null>(null);
 
   const handleDragStart = (e: DragStartEvent): void => {
     setActiveData(e.active.data.current as DraggableData);
   };
+
   const handleDragOver = (e: DragOverEvent): void => {
     if (!e.over || e.active.data.current!.isList) {
       return;
     }
-    dispatchLists({
-      type: "item_dragged_over",
-      activeListIndex: e.active.data.current!.listIndex,
-      activeItemIndex: e.active.data.current!.itemIndex,
-      overItemIndex: e.over?.data.current!.itemIndex,
-      overListIndex: e.over?.data.current!.listIndex,
-    });
+
+    moveItemBetweenLists(
+      boardId,
+      e.active.data.current!.listIndex,
+      e.active.data.current!.itemIndex,
+      e.over.data.current!.listIndex,
+      e.over.data.current!.itemIndex,
+    );
   };
 
   const handleDragEnd = (e: DragEndEvent): void => {
     setActiveData(null);
+
     if (!e.over) {
       return;
     }
+
     if (e.active.data.current!.isList) {
-      dispatchLists({
-        type: "list_dragged_end",
-        activeListIndex: e.active.data.current!.listIndex,
-        overListIndex: e.over?.data.current!.listIndex,
-      });
+      moveList(
+        boardId,
+        e.active.data.current!.listIndex,
+        e.over.data.current!.listIndex,
+      );
     } else {
-      dispatchLists({
-        type: "item_dragged_end",
-        activeListIndex: e.active.data.current!.listIndex,
-        activeItemIndex: e.active.data.current!.itemIndex,
-        overItemIndex: e.over?.data.current!.itemIndex,
-      });
+      moveItem(
+        boardId,
+        e.active.data.current!.listIndex,
+        e.active.data.current!.itemIndex,
+        e.over.data.current!.itemIndex,
+      );
     }
   };
 
   return (
     <DndContext
-      onDragOver={handleDragOver}
       sensors={sensors}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
       {children}
@@ -76,15 +90,15 @@ export default function DndProvider({ children }: Props): ReactNode {
           (activeData.isList ? (
             <List
               presentational
-              list={activeData.list}
               listIndex={activeData.listIndex}
+              list={activeData.list}
             />
           ) : (
             <ListItem
               presentational
               listIndex={activeData.listIndex}
-              item={activeData.item}
               itemIndex={activeData.itemIndex}
+              item={activeData.item}
             />
           ))}
       </DragOverlay>
