@@ -1,16 +1,16 @@
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
-import styles from "./Sidebar.module.css";
-import { Link } from "react-router";
-import SidebarItem from "./components/SidebarItem/SidebarItem";
-import MingcuteExitLine from "@/icons/MingcuteExitLine";
-import SidebarGroups from "./components/SidebarGroups/SidebarGroups";
-import { SidebarContext } from "./context/sidebar-context";
-import IconButton from "../IconButton/IconButton";
 import MingcuteArrowsRightLine from "@/icons/MingcuteArrowsRightLine";
-import clsx from "clsx";
+import MingcuteExitLine from "@/icons/MingcuteExitLine";
 import { useSidebarStore } from "@/stores/sidebar-store";
+import clsx from "clsx";
+import { Link } from "react-router";
+import IconButton from "../IconButton/IconButton";
 import Logo from "../Logo/Logo";
+import SidebarGroups from "./components/SidebarGroups/SidebarGroups";
+import SidebarItem from "./components/SidebarItem/SidebarItem";
+import { SidebarContext } from "./context/sidebar-context";
+import styles from "./Sidebar.module.css";
 
 export default function Sidebar(): ReactNode {
     const { fold, isCollapsed } = useSidebarStore()
